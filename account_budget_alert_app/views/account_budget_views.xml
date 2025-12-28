@@ -18,7 +18,7 @@ Budgets
         <field name="name">account.budget.post.tree</field>
         <field name="model">account.budget.post</field>
         <field name="arch" type="xml">
-            <tree string="Budgetary Position">
+            <tree>
                 <field name="name"/>
                 <field name="company_id" options="{'no_create': True}" groups="base.group_multi_company"/>
             </tree>
@@ -105,7 +105,7 @@ Budgets
                             <field name="crossovered_budget_line"
                                    context="{'default_date_from': date_from,'default_date_to': date_to}" colspan="4"
                                    nolabel="1" attrs="{'readonly':[('state','!=','draft')]}">
-                                <tree string="Budget Lines" decoration-success="is_above_budget and planned_amount &gt; 0" decoration-danger="is_above_budget and planned_amount &lt; 0" editable="bottom">
+                                <tree decoration-success="is_above_budget and planned_amount &gt; 0" decoration-danger="is_above_budget and planned_amount &lt; 0" editable="bottom">
                                     <field name="general_budget_id" domain="['|', ('company_id', '=', False), ('company_id', '=', parent.company_id)]" />
                                     <field name="analytic_account_id" domain="['|', ('company_id', '=', False), ('company_id', '=', parent.company_id)]" groups="analytic.group_analytic_accounting"/>
                                     <field name="date_from"/>
@@ -160,7 +160,7 @@ Budgets
         <field name="name">crossovered.budget.view.tree</field>
         <field name="model">crossovered.budget</field>
         <field name="arch" type="xml">
-            <tree decoration-info="state == 'draft'" decoration-muted="state in ('done','cancel')" string="Budget">
+            <tree decoration-info="state == 'draft'" decoration-muted="state in ('done','cancel')">
                 <field name="name" colspan="1"/>
                 <field name="date_from"/>
                 <field name="date_to"/>
@@ -283,7 +283,7 @@ Budgets
         <field name="name">crossovered.budget.line.tree</field>
         <field name="model">crossovered.budget.lines</field>
         <field name="arch" type="xml">
-            <tree string="Budget Lines" create="0">
+            <tree create="0">
                 <field name="currency_id" invisible="1"/>
                 <field name="crossovered_budget_id" invisible="1"/>
                 <field name="general_budget_id" />
