@@ -33,12 +33,13 @@
         </field>
     </record>
 
-    <act_window name="Account Debt Report"
-        id="action_account_debt_report_wizard"
-        binding_model="res.partner"
-        res_model="account.debt.report.wizard"
-        view_mode="form"
-        target="new"/>
+    <record id="action_account_debt_report_wizard" model="ir.actions.act_window">
+        <field name="name">Account Debt Report</field>
+        <field name="binding_model">res.partner</field>
+        <field name="res_model">account.debt.report.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
         <!-- ahora lo agregamos al print -->
         <!-- key2="client_action_multi" -->
                 <!-- key2="client_print_multi" -->
