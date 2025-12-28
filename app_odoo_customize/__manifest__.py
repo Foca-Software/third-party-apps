@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 
 # Created on 2018-11-26
 # author: 广州尚鹏，https://www.sunpop.cn
@@ -23,7 +22,7 @@
 
 {
     'name': 'odoo 15,14,13 Customize OEM(Boost, Data reset)',
-    'version': '13.22.04.26',
+    'version': "15.0.1.0.0",
     'author': 'Sunpop.cn',
     'category': 'Productivity',
     'website': 'https://www.sunpop.cn',
