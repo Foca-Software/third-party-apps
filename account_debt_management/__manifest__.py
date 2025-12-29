@@ -32,6 +32,8 @@
         # mas adelante se puede separar en otro modulo que integre
         # funcionalidad con este otro modulo
         # 'account_payment_group_document',
+        'report_aeroo',
+        'report_aeroo_sample'
     ],
     'data': [
         'security/ir.model.access.csv',

@@ -35,7 +35,8 @@
 
     <record id="action_account_debt_report_wizard" model="ir.actions.act_window">
         <field name="name">Account Debt Report</field>
-        <field name="binding_model">res.partner</field>
+        <field name="binding_model_id" ref="base.model_res_partner"/>
+        <field name="binding_type">action</field>
         <field name="res_model">account.debt.report.wizard</field>
         <field name="view_mode">form</field>
         <field name="target">new</field>

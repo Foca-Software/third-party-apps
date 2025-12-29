@@ -16,6 +16,7 @@ class AccountDebtLine(models.Model):
         ],
         "account.move": [
             "l10n_latam_document_type_id",
+            "move_type"
         ],
         "account.move.line": [
             "account_id",
@@ -274,7 +275,7 @@ class AccountDebtLine(models.Model):
                 am.l10n_latam_document_type_id as document_type_id,
                 -- c.document_number as document_number,
                 am.name as document_number,
-                am.type as type,
+                am.move_type as type,
                 full_reconcile_id,
                 bool_and(l.reconciled) as reconciled,
                 -- l.blocked as blocked,
@@ -331,7 +332,7 @@ class AccountDebtLine(models.Model):
             GROUP BY
                 l.partner_id, am.company_id, l.account_id, l.currency_id,
                 l.full_reconcile_id,
-                a.internal_type, a.user_type_id, am.name, am.type,
+                a.internal_type, a.user_type_id, am.name, am.move_type,
                 am.l10n_latam_document_type_id %s
                 -- dt.doc_code_prefix, am.document_number
         """
