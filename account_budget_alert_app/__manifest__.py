@@ -22,8 +22,5 @@
     'demo': ['data/account_budget_demo.xml'],
     'installable' : True,
     'auto_install' : False,
-    'price': 58,
     'category' : 'Accounting',
-    'currency': "EUR",
 }
-

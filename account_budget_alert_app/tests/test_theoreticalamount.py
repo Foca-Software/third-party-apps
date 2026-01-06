@@ -21,12 +21,11 @@ class TestTheoreticalAmount(TestAccountBudgetCommon):
     def setUp(self):
         super(TestTheoreticalAmount, self).setUp()
         #create the budgetary position
-        user_type_id = self.ref('account.data_account_type_revenue')
         tag_id = self.ref('account.account_tag_operating')
         account_rev = self.env['account.account'].create({
             'code': 'Y2020',
             'name': 'Budget - Test Revenue Account',
-            'user_type_id': user_type_id,
+            'account_type': 'income',
             'tag_ids': [(4, tag_id, 0)]
         })
         buget_post = self.env['account.budget.post'].create({
@@ -79,7 +78,7 @@ class TestTheoreticalAmount(TestAccountBudgetCommon):
             self.mock_date.today.return_value = Date.from_string(date)
             self.assertAlmostEqual(self.line.theoritical_amount, expected_amount)
             #invalidate the cache of the budget lines to recompute the theoritical amount at next iteration
-            self.line.invalidate_cache()
+            self.line.invalidate_recordset(['theoritical_amount'])
 
     def test_theoritical_amount_with_paid_date(self):
         test_list = [
@@ -95,7 +94,7 @@ class TestTheoreticalAmount(TestAccountBudgetCommon):
             self.mock_date.today.return_value = Date.from_string(date)
             self.assertAlmostEqual(self.paid_date_line.theoritical_amount, expected_amount)
             #invalidate the cache of the budget lines to recompute the theoritical amount at next iteration
-            self.paid_date_line.invalidate_cache()
+            self.paid_date_line.invalidate_recordset(['theoritical_amount'])
 
     def tearDown(self):
         self.patcher.stop()
