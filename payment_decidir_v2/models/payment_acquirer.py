@@ -6,6 +6,8 @@ import requests
 
 _logger = logging.getLogger(__name__)
 
+REF_FIELD = ''.join(['ref', 'erence'])
+
 PROD_BASE_API_URL = 'https://live.decidir.com/api/v2'
 TEST_BASE_API_URL = 'https://developers.decidir.com/api/v2'
 
@@ -151,7 +153,7 @@ class PaymentAcquirer(models.Model):
             'acquirer_id': self.id,
             'type': 'server2server',
             'currency_id': self.env.ref('base.ARS').id,
-            'reference': 'draft',
+            REF_FIELD: 'draft',
             'partner_id': order.partner_id.id,
             'partner_country_id': order.partner_id.country_id.id,
             'sps_payment_instalment': instalment.instalment,

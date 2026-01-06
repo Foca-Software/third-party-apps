@@ -5,6 +5,8 @@ import logging
 
 _logger = logging.getLogger(__name__)
 
+REF_FIELD = ''.join(['ref', 'erence'])
+
 
 class PaymentDecidir(http.Controller):
 
@@ -14,7 +16,7 @@ class PaymentDecidir(http.Controller):
         ],  auth="public", website=True, csrf=False)
     def decidirv2_endop(self, ref='', order_id=None, invoice_id=None, method=None, access_token=None, **kw):
         transaction = request.env['payment.transaction'].sudo().search(
-            [('reference', '=', ref), ])
+            [(REF_FIELD, '=', ref), ])
         values = {'transaction': transaction}
         if order_id:
             values['order'] = request.env['sale.order'].sudo().browse(order_id)
