@@ -12,7 +12,7 @@ class AccountInvoiceConsolidation(models.Model):
     _description = "Invoice Consolidation"
 
     @api.depends("invoice_ids", "invoice_id", "payment_ids")
-    def compute_amount(self):
+    def _compute_amount(self):
         amount_untaxed = 0.0
         amount_tax = 0.0
         residual = 0.0
