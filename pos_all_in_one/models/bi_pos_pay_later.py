@@ -263,7 +263,9 @@ class PosSessionInherit(models.Model):
 				key = order.partner_id
 				invoice_receivables[key] = self._update_amounts(invoice_receivables[key], {'amount': order._get_amount_receivable()}, order.date_order)
 				# side loop to gather receivable lines by account for reconciliation
-				for move_line in order.account_move.line_ids.filtered(lambda aml: aml.account_id.internal_type == 'receivable' and not aml.reconciled):
+				# `internal_type` was renamed/merged into `account_type`.
+				# Receivable accounts are now `asset_receivable`.
+				for move_line in order.account_move.line_ids.filtered(lambda aml: aml.account_id.account_type == 'asset_receivable' and not aml.reconciled):
 					order_account_move_receivable_lines[move_line.account_id.id] |= move_line
 			else:
 				order_taxes = defaultdict(tax_amounts)

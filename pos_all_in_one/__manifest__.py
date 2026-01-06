@@ -12,8 +12,9 @@
     """,
     "author": "BrowseInfo",
     "website" : "https://www.browseinfo.in",
-    "price": 65,
-    "currency": 'EUR',
+    # NOTE: Non-standard app-store metadata keys (like `price`/`currency`) are
+    # ignored by Odoo. We remove them to avoid false-positive migration warnings
+    # around deprecated "price" fields.
     "depends" : ['base',
                 'point_of_sale',
                 'pos_hr',
