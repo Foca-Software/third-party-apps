@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Part of BrowseInfo. See LICENSE file for full copyright and licensing details.
 
 from odoo import fields, models, api, _ , tools
@@ -149,7 +148,7 @@ class PosOrderInherit(models.Model):
 			# do not hide transactional errors, the order(s) won't be saved!
 			raise
 		except Exception as e:
-			_logger.error('Could not fully process the POS Order: %s', tools.ustr(e))
+			_logger.error('Could not fully process the POS Order: %s', e)
 		if order.get('to_invoice' , False) and pos_order.state == 'paid':
 			pos_order.action_pos_order_invoice()
 			if pos_order.discount_type and pos_order.discount_type == "Fixed":
@@ -195,7 +194,7 @@ class PosSessionInherit(models.Model):
 			sudo = False
 			if (
 				not self.env['account.move'].check_access_rights('create', raise_exception=False)
-				and self.user_has_groups('point_of_sale.group_pos_user')
+				and self.env.user.has_group('point_of_sale.group_pos_user')
 			):
 				sudo = True
 				self.sudo()._create_account_move()

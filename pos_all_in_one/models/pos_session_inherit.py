@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Part of BrowseInfo. See LICENSE file for full copyright and licensing details.
 
 from itertools import groupby
@@ -57,7 +56,7 @@ class PosOrderInherit(models.Model):
 		return pick.name 
 
 	def make_picking_line(self, picking_type,src,dest,state,product, pick_id):
-		stock_lot_obj = self.env['stock.production.lot']
+		stock_lot_obj = self.env['stock.lot']
 		stock_move_obj = self.env['stock.move']
 		stock_move_line_obj = self.env['stock.move.line']
 		src_location = self.env['stock.location'].browse(int(src))
@@ -83,7 +82,7 @@ class PosOrderInherit(models.Model):
 		return moveids
 
 	def make_done_picking_line(self,move, picking_type,src,dest,state,product, pick_id):
-		stock_lot_obj = self.env['stock.production.lot']
+		stock_lot_obj = self.env['stock.lot']
 		stock_move_line_obj = self.env['stock.move.line']
 		src_location = self.env['stock.location'].browse(int(src))
 		dest_location = self.env['stock.location'].browse(int(dest))

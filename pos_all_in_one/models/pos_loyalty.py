@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Part of BrowseInfo. See LICENSE file for full copyright and licensing details.
 
 from odoo import fields, models, api, _, tools
@@ -33,7 +32,7 @@ class res_partner(models.Model):
 		return {
 			'name': 'Loyalty Details',
 			'type': 'ir.actions.act_window',
-			'view_mode': 'tree,form',
+			'view_mode': 'list,form',
 			'res_model': 'pos.loyalty.history',
 			'domain': [('partner_id', '=', self.id)],
 		}
@@ -184,7 +183,7 @@ class pos_order(models.Model):
 									loyalty_history = loyalty_history_obj.create(vals)
 							
 					except Exception as e:
-						_logger.error('Error in point of sale validation: %s', tools.ustr(e))
+						_logger.error('Error in point of sale validation: %s', e)
 		return order_ids
 
 	@api.model
