@@ -142,7 +142,7 @@
         'security/ir.model.access.csv',
         'views/app_odoo_customize_views.xml',
         'views/app_theme_config_settings_views.xml',
-        'views/res_config_settings_views.xml',
+        # 'views/res_config_settings_views.xml',
         'views/ir_views.xml',
         'views/ir_module_module_views.xml',
         'views/ir_translation_views.xml',
@@ -156,6 +156,18 @@
         # 'data/digest_template_data.xml',
         'data/res_company_data.xml',
     ],
+    'assets': {
+        'web.assets_backend': [
+            'app_odoo_customize/static/src/scss/app.scss',
+            'app_odoo_customize/static/src/scss/ribbon.scss',
+            'app_odoo_customize/static/src/scss/dialog.scss',
+
+            'app_odoo_customize/static/src/js/app_window_title.js',
+            'app_odoo_customize/static/src/js/customize_user_menu.js',
+            'app_odoo_customize/static/src/js/ribbon.js',
+            'app_odoo_customize/static/src/js/dialog.js',
+        ],
+    },
     'qweb': [
         'static/src/xml/*.xml',
     ],
@@ -167,5 +179,5 @@
     # 'post_init_hook': 'post_init_hook',
     'installable': True,
     'application': True,
-    'auto_install': True,
+    'auto_install': False,
 }
