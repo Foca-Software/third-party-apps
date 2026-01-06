@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 
 # Created on 2018-11-26
 # author: 广州尚鹏，https://www.sunpop.cn
@@ -23,7 +22,7 @@
 
 {
     'name': "Supply Chain Management, All in one Solution",
-    'version': '13.20.09.01',
+    'version': "18.0.1.0.0",
     'author': 'Sunpop.cn',
     'category': 'Base',
     'website': 'https://www.sunpop.cn',
