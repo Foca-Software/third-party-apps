@@ -19,7 +19,7 @@
 		<field name="model">pos.order</field>
 		<field name="inherit_id" ref="point_of_sale.view_pos_pos_form"/>
 		<field name="arch" type="xml">
-			<xpath expr="//form/sheet/notebook/page/field[@name='lines']//tree/field[@name='discount']" position="attributes">
+			<xpath expr="//form/sheet/notebook/page/field[@name='lines']//list/field[@name='discount']" position="attributes">
 				<attribute name="string">Discount</attribute>
 			</xpath>
 			<xpath expr="//form/sheet/notebook/page/field[@name='lines']//form/group/field[@name='discount']" position="attributes">
@@ -29,11 +29,11 @@
 	</record>
 
 	<record model="ir.ui.view" id="pos_order_line_inherit_tree">
-		<field name="name">pos.order.line.tree</field>
+		<field name="name">pos.order.line.list</field>
 		<field name="model">pos.order</field>
 		<field name="inherit_id" ref="point_of_sale.view_pos_pos_form"/>
 		<field name="arch" type="xml">
-			<xpath expr="//form/sheet/notebook/page/field[@name='lines']//tree/field[@name='discount']" position="before">
+			<xpath expr="//form/sheet/notebook/page/field[@name='lines']//list/field[@name='discount']" position="before">
 				<field name="discount_line_type" invisible="1">Discount type</field>
 				<field name="original_line_id" invisible="1"/>
 				<field name="return_qty"  invisible="1"/>
@@ -46,12 +46,12 @@
 			<field name="model">account.move</field>
 			<field name="inherit_id" ref="account.view_move_form"/>
 			<field name="arch" type="xml">
-				<xpath expr="//field[@name='invoice_line_ids']//tree//field[@name='discount']" position="after">
+				<xpath expr="//field[@name='invoice_line_ids']//list//field[@name='discount']" position="after">
 					<field name="pos_order_line_id" invisible="1"/>
 					<field string="Discount Type" name="discount_line_type" attrs="{'invisible': [('pos_order_line_id', '=', False)]}"/>
 				</xpath>
 
-				<xpath expr="//field[@name='invoice_line_ids']//tree//field[@name='discount']" position="replace">
+				<xpath expr="//field[@name='invoice_line_ids']//list//field[@name='discount']" position="replace">
 					<field name="discount" string="Disc" optional="show"/>
 				</xpath>
 			</field>
