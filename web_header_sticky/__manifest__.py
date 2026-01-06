@@ -16,8 +16,6 @@ Header of List View and One2many List View are sticked when rolling
     ''',
     'live_test_url': 'https://demo13.domiup.com',
     'author': 'Domiup',
-    'price': 0,
-    'currency': 'EUR',
     'license': 'OPL-1',
     'support': 'domiup.contact@gmail.com',
     # 'website': 'https://youtu.be/Bsmjch5A73Y',
