@@ -394,7 +394,7 @@ class AccountDebtLine(models.Model):
         """
         # al final esto lo hacemos por vista, ademas tampoco es tan critico
         # porque podrian hacer este ajuste manualmente
-        # if not self.user_has_groups('account.group_account_manager'):
+        # if not self.env.user.has_group('account.group_account_manager'):
         #     group = self.env.ref('account.group_account_manager')
         #     raise UserError(_(
         #         'Only users with group "%s / %s" group can cancel amount '

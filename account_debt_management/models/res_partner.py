@@ -48,10 +48,10 @@ class ResPartner(models.Model):
             # group_by_company
             else:
                 # we only want companies that have moves for this partner
-                records = self.env['account.debt.line'].read_group(
+                records = self.env['account.debt.line']._read_group(
                     domain=[('partner_id', '=', self.id)],
-                    fields=['company_id'],
                     groupby=['company_id'],
+                    aggregates=['__count'],
                 )
                 company_ids = []
                 for record in records:
