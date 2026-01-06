@@ -28,8 +28,6 @@
     'website': 'https://www.sunpop.cn',
     'license': 'LGPL-3',
     'sequence': 2,
-    'price': 0.00,
-    'currency': 'EUR',
     'images': ['static/description/banner.png'],
     'depends': [
         'sale_management',
