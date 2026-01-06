@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 ##############################################################################
 #
 #    Odoo
@@ -8,7 +7,7 @@
 
 {
     'name': 'MRO',
-    'version': '1.10',
+    'version': "18.0.1.0.0",
     'summary': 'Asset Maintenance, Repair and Operation',
     'description': """
 Manage Maintenance process in OpenERP
