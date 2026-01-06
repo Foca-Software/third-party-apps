@@ -95,8 +95,10 @@ class AccountDebtLine(models.Model):
     )
     reconciled = fields.Boolean()
     partner_id = fields.Many2one("res.partner", "Cliente/Proveedor", readonly=True)
-    account_type = fields.Many2one(
-        "account.account.type", "Account Type", readonly=True
+    account_type = fields.Selection(
+        selection=lambda self: self.env['account.account']._fields['account_type'].selection,
+        string="Account Type",
+        readonly=True,
     )
     company_id = fields.Many2one("res.company", "Empresa", readonly=True)
 
@@ -264,8 +266,8 @@ class AccountDebtLine(models.Model):
                 -- es una funcion y se renumera constantemente, por eso
                 -- necesita el over
                 -- ROW_NUMBER() OVER (ORDER BY l.partner_id, am.company_id,
-                --     l.account_id, l.currency_id, a.internal_type,
-                --     a.user_type_id, c.document_number, am.document_type_id,
+                --     l.account_id, l.currency_id, a.account_type,
+                --     a.account_type, c.document_number, am.document_type_id,
                 --     l.date_maturity) as id,
                 -- igualmente los move lines son unicos, usamos eso como id
                 max(l.id) as id,
@@ -302,14 +304,14 @@ class AccountDebtLine(models.Model):
                 -- l.reconcile_partial_id as reconcile_partial_id,
                 l.partner_id as partner_id,
                 am.company_id as company_id,
-                a.internal_type as internal_type,
+                max(CASE WHEN a.account_type = 'asset_receivable' THEN 'receivable' WHEN a.account_type = 'liability_payable' THEN 'payable' ELSE NULL END) as internal_type,
                 -- am.journal_id as journal_id,
                 -- p.fiscalyear_id as fiscalyear_id,
                 -- am.period_id as period_id,
                 l.account_id as account_id,
-                --l.analytic_account_id as analytic_account_id,
-                -- a.internal_type as type,
-                a.user_type_id as account_type,
+                --l.analytic_distribution as analytic_distribution,
+                -- a.account_type as type,
+                max(a.account_type) as account_type,
                 l.currency_id as currency_id,
                 sum(l.amount_currency) as amount_currency,
                 sum(l.amount_residual_currency) as amount_residual_currency,
@@ -328,11 +330,11 @@ class AccountDebtLine(models.Model):
                     am.l10n_latam_document_type_id=dt.id)
             WHERE
                 am.state != 'draft' and
-                a.internal_type IN ('payable', 'receivable')
+                a.account_type IN ('payable', 'receivable')
             GROUP BY
                 l.partner_id, am.company_id, l.account_id, l.currency_id,
                 l.full_reconcile_id,
-                a.internal_type, a.user_type_id, am.name, am.move_type,
+                am.name, am.move_type,
                 am.l10n_latam_document_type_id %s
                 -- dt.doc_code_prefix, am.document_number
         """
