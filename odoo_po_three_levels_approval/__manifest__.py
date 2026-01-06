@@ -27,8 +27,6 @@ website document attachment product attachment
         'report/purchase_order_templates.xml',
     ],
     'images': ['static/description/odoo_po_three_level_approval_banner.gif'],
-    'price': 19.99,
-    'currency': 'USD',
     'license': 'OPL-1',
     'installable': True,
     'application': False,
