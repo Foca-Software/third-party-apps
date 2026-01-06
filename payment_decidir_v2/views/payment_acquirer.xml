@@ -17,9 +17,9 @@
                 <group attrs="{'invisible': [('provider', '!=', 'decidir_v2')]}" string="Decidir">
                     <field name="card_ids" widget="many2many_tags"/>
                     <field name="instalment_ids" widget="one2many_list">
-                        <tree editable="buttom">
+                        <list editable="buttom">
                             <field name="name"/>
-                        </tree>
+                        </list>
                     </field>
                     <field attrs="{'required': [('provider', '=', 'decidir_v2')]}" name="decidir_commerce"/>
                     <field attrs="{'required': [('provider', '=', 'decidir_v2')]}" name="decidir_public_key"/>
