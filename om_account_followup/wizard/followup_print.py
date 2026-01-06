@@ -185,8 +185,7 @@ class FollowupPrint(models.TransientModel):
                 ON (l.account_id=a.id)
                 WHERE (l.full_reconcile_id IS NULL
                 AND parent_state = 'posted')
-                AND a.user_type_id IN (SELECT id FROM account_account_type
-                    WHERE type = 'receivable')
+                AND a.account_type = 'asset_receivable'
                 AND (l.partner_id is NOT NULL)
                 AND (l.debit > 0)
                 AND (l.company_id = %s)
