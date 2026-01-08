@@ -9,8 +9,7 @@ from odoo import api, models, fields, _
 class ResPartner(models.Model):
     _inherit = 'res.partner'
 
-    unreconciled_domain = [
-        ('reconciled', '=', False), ('full_reconcile_id', '=', False)]
+    unreconciled_domain = [('reconciled', '=', False), ('full_reconcile_id', '=', False)]
     receivable_domain = [('internal_type', '=', 'receivable')]
     payable_domain = [('internal_type', '=', 'payable')]
 
@@ -58,6 +57,7 @@ class ResPartner(models.Model):
                     company_ids.append(record['company_id'][0])
                 return self.env['res.company'].browse(company_ids)
 
+
     def _get_debt_report_lines(self, company):
         def get_line_vals(
                 date=None, name=None, detail_lines=None, date_maturity=None,
@@ -85,7 +85,6 @@ class ResPartner(models.Model):
             }
 
         self.ensure_one()
-
         result_selection = self._context.get('result_selection', False)
         from_date = self._context.get('from_date', False)
         to_date = self._context.get('to_date', False)

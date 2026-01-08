@@ -30,18 +30,27 @@ class AccountDebtReportWizard(models.TransientModel):
         required=True,
         default='all'
     )
-    from_date = fields.Date('From')
-    to_date = fields.Date('To')
-    show_invoice_detail = fields.Boolean('Show Invoice Detail')
+    from_date = fields.Date(
+        'From'
+    )
+    to_date = fields.Date(
+        'To'
+    )
+    show_invoice_detail = fields.Boolean(
+        'Show Invoice Detail'
+    )
     # TODO implementar
     # show_receipt_detail = fields.Boolean('Show Receipt Detail')
     historical_full = fields.Boolean(
         help='If true, then it will show all partner history. If not, only '
-        'unreconciled items will be shown.')
+        'unreconciled items will be shown.'
+    )
     financial_amounts = fields.Boolean(
-        help='Add columns for financial amounts?')
+        help='Add columns for financial amounts?'
+    )
     secondary_currency = fields.Boolean(
-        help='Add columns for secondary currency?')
+        help='Add columns for secondary currency?'
+    )
 
     @api.constrains
     def check_company_type(self):
@@ -49,6 +58,7 @@ class AccountDebtReportWizard(models.TransientModel):
             raise ValidationError(_(
                 'You can only select "Consolidate all Companies if no company '
                 'is selected'))
+
 
     def confirm(self):
         active_ids = self._context.get('active_ids', False)
@@ -80,6 +90,7 @@ class AccountDebtReportWizard(models.TransientModel):
             show_invoice_detail=self.show_invoice_detail,
             # show_receipt_detail=self.show_receipt_detail,
         ).report_action(partners, data=data)
+
 
     def send_by_email(self):
         active_ids = self._context.get('active_ids', [])

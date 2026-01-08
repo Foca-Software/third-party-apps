@@ -33,7 +33,7 @@
         # funcionalidad con este otro modulo
         # 'account_payment_group_document',
         'report_aeroo',
-        'report_aeroo_sample'
+        # 'report_aeroo_sample'
     ],
     'data': [
         'security/ir.model.access.csv',

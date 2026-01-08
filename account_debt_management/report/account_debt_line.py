@@ -35,7 +35,9 @@ class AccountDebtLine(models.Model):
         "litigation with the associated partner",
     )
     document_type_id = fields.Many2one(
-        "account.document.type", "Tipo Documento", readonly=True
+        "account.document.type", 
+        "Tipo Documento", 
+        readonly=True
     )
     document_number = fields.Char(
         readonly=True,
@@ -53,9 +55,17 @@ class AccountDebtLine(models.Model):
         ],
         string="Type",
     )
-    date = fields.Date(readonly=True)
-    date_maturity = fields.Date(readonly=True, string="Fecha Vencimiento")
-    ref = fields.Char("Referencia", readonly=True)
+    date = fields.Date(
+        readonly=True
+    )
+    date_maturity = fields.Date(
+        readonly=True, 
+        string="Fecha Vencimiento"
+    )
+    ref = fields.Char(
+        "Referencia", 
+        readonly=True
+    )
     amount = fields.Monetary(
         readonly=True,
         string="Monto",
@@ -66,7 +76,11 @@ class AccountDebtLine(models.Model):
         string="Monto residual",
         currency_field="company_currency_id",
     )
-    currency_id = fields.Many2one("res.currency", "Moneda", readonly=True)
+    currency_id = fields.Many2one(
+        "res.currency", 
+        "Moneda", 
+        readonly=True
+    )
     amount_currency = fields.Monetary(
         readonly=True,
         string="Monto en moneda origen",
@@ -77,8 +91,14 @@ class AccountDebtLine(models.Model):
         string="Saldo en moneda de la empresa",
         currency_field="currency_id",
     )
-    move_lines_str = fields.Char("Entry Lines String", readonly=True)
-    account_id = fields.Many2one("account.account", "Cuenta", readonly=True)
+    move_lines_str = fields.Char(
+        "Entry Lines String", 
+        readonly=True
+    )
+    account_id = fields.Many2one(
+        "account.account", "Cuenta", 
+        readonly=True
+    )
     internal_type = fields.Selection(
         [("receivable", "Receivable"), ("payable", "Payable")],
         "Tipo",
@@ -94,14 +114,21 @@ class AccountDebtLine(models.Model):
         readonly=True,
     )
     reconciled = fields.Boolean()
-    partner_id = fields.Many2one("res.partner", "Cliente/Proveedor", readonly=True)
+    partner_id = fields.Many2one(
+        "res.partner", 
+        "Cliente/Proveedor", 
+        readonly=True
+    )
     account_type = fields.Selection(
         selection=lambda self: self.env['account.account']._fields['account_type'].selection,
         string="Account Type",
         readonly=True,
     )
-    company_id = fields.Many2one("res.company", "Empresa", readonly=True)
-
+    company_id = fields.Many2one(
+        "res.company", 
+        "Empresa", 
+        readonly=True
+    )
     # computed fields
     financial_amount = fields.Monetary(
         compute="_compute_move_lines_data",
@@ -283,7 +310,7 @@ class AccountDebtLine(models.Model):
                 -- l.blocked as blocked,
                 -- si cualquier deuda esta bloqueada de un comprobante,
                 -- toda deberia estar bloqueda
-                bool_and(l.blocked) as blocked,
+                -- bool_and(l.blocked) as blocked, BLOQUEADA PORQUE CAMPO NO EXISTE - ac
 
                 -- TODO borrar, al final no pudimos hacerlo asi porque si no
                 -- agrupamos por am.name, entonces todo lo que no tenga tipo
@@ -364,6 +391,7 @@ class AccountDebtLine(models.Model):
             # 'view_id': res[0],
         }
 
+
     def get_model_id_and_name(self):
         """
         Function used to display the right action on journal items on dropdown
@@ -388,6 +416,7 @@ class AccountDebtLine(models.Model):
             return ["account.move", self.move_id.id, _("View Invoice"), view_id]
         # TODO ver si implementamos que pasa cuando hay mas de un move
         return ["account.move", self.move_id.id, _("View Move"), False]
+
 
     def cancel_amount_residual_currency(self):
         """Agregamos este metodo (y el botón) para cancelar la deuda en moneda
