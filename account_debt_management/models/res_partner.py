@@ -159,13 +159,13 @@ class ResPartner(models.Model):
             detail_lines = []
             if show_invoice_detail:
                 for inv_line in record.move_line_ids.mapped(
-                        'invoice_id.invoice_line_ids'):
+                        'move_id.invoice_line_ids'):
                     detail_lines.append(
                         ("* %s x %s %s" % (
                             inv_line.name.replace(
                                 '\n', ' ').replace('\r', ''),
                             inv_line.quantity,
-                            inv_line.uom_id.name)))
+                            inv_line.product_uom_id.name)))
             document_number = record.document_number
             date_maturity = record.date_maturity
             date = record.date
