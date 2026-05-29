@@ -7,8 +7,7 @@ from odoo.exceptions import ValidationError
 
 
 class AccountDebtReportWizard(models.TransientModel):
-    _name = 'account.debt.report.wizard'
-    _description = 'Account Debt Report Wizard'
+    _inherit = 'account.debt.report.wizard'
 
     company_id = fields.Many2one(
         'res.company',
