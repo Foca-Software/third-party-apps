@@ -4,6 +4,7 @@
 ##############################################################################
 from odoo import api, models, fields, _
 # from odoo.exceptions import ValidationError
+from odoo.addons.account.models.account_move import BYPASS_LOCK_CHECK
 
 
 class ResPartner(models.Model):
@@ -27,6 +28,50 @@ class ResPartner(models.Model):
         compute='_compute_debt_balance',
         currency_field='currency_id',
     )
+
+    def write(self, vals):
+        if 'parent_id' in vals:
+            vals = dict(vals)
+            parent_id = vals.pop('parent_id')
+
+            # Replicamos la búsqueda del método original (account/l10n_ar)
+            # para poder hacer el mismo post-proceso de commercial_partner_id
+            partner2moves = self.sudo().env['account.move'].search(
+                [('partner_id', 'in', self.ids)]
+            ).grouped('partner_id')
+
+            res = super().write(vals) if vals else True
+
+            # Bypass deliberado del check de VAT distinto entre partner y
+            # nuevo parent_id (definido en el write() original de
+            # account/l10n_ar). Se setea parent_id por SQL directo para
+            # que ese write() nunca vea 'parent_id' en su vals y por lo
+            # tanto nunca dispare el UserError.
+            self.env.cr.execute(
+                "UPDATE res_partner SET parent_id = %s WHERE id IN %s",
+                (parent_id, tuple(self.ids)),
+            )
+            self.invalidate_recordset(['parent_id'])
+
+            # Replicamos el post-proceso del método original para no
+            # perder la actualización de commercial_partner_id en los
+            # asientos ya existentes.
+            for partner, moves in partner2moves.items():
+                partner._compute_commercial_partner()
+                # Make sure to write on all the lines at the same time to
+                # avoid breaking the reconciliation check
+                moves.line_ids.with_context(
+                    bypass_lock_check=BYPASS_LOCK_CHECK
+                ).partner_id = partner.commercial_partner_id
+                moves.with_context(
+                    bypass_lock_check=BYPASS_LOCK_CHECK
+                ).commercial_partner_id = partner.commercial_partner_id
+                partner._message_log(
+                    body=_("The commercial partner has been updated for all related accounting entries.")
+                )
+            return res
+
+        return super().write(vals)
 
     def _get_debt_report_companies(self):
         """
