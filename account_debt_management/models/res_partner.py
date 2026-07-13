@@ -32,7 +32,7 @@ class ResPartner(models.Model):
     def write(self, vals):
         if 'parent_id' in vals:
             vals = dict(vals)
-            parent_id = vals.pop('parent_id')
+            parent_id = vals.pop('parent_id') or None
 
             # Replicamos la búsqueda del método original (account/l10n_ar)
             # para poder hacer el mismo post-proceso de commercial_partner_id
