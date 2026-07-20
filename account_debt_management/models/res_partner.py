@@ -53,6 +53,12 @@ class ResPartner(models.Model):
             )
             self.invalidate_recordset(['parent_id'])
 
+            # Como el parent_id se seteó por SQL directo (fuera del ORM),
+            # los @api.constrains sobre parent_id no se disparan solos.
+            # Los invocamos manualmente para no perder esa validación
+            # (ej. cuenta grupal en debo_contacts_fields).
+            self._check_parent_is_group_account()
+
             # Replicamos el post-proceso del método original para no
             # perder la actualización de commercial_partner_id en los
             # asientos ya existentes.
