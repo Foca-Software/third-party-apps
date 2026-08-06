@@ -62,19 +62,49 @@ class ResPartner(models.Model):
             # Replicamos el post-proceso del método original para no
             # perder la actualización de commercial_partner_id en los
             # asientos ya existentes.
+            #
+            # OJO: 'bypass_lock_check' solo desactiva el chequeo de fechas de
+            # cierre fiscal/impositivo (_check_fiscal_lock_dates). No tiene
+            # ningún efecto sobre _check_reconciliation() (el que tira
+            # "No puede hacer esta modificación en un asiento contable
+            # conciliado"). Por eso separamos los asientos: solo propagamos
+            # el commercial_partner_id en los que NO están conciliados. Los
+            # conciliados quedan históricamente bajo el partner original
+            # (no afecta reportes de deuda/saldo, que ya excluyen lo
+            # conciliado) y se informan aparte para que, si hace falta
+            # migrarlos, se haga a mano rompiendo la conciliación primero.
             for partner, moves in partner2moves.items():
                 partner._compute_commercial_partner()
-                # Make sure to write on all the lines at the same time to
-                # avoid breaking the reconciliation check
-                moves.line_ids.with_context(
-                    bypass_lock_check=BYPASS_LOCK_CHECK
-                ).partner_id = partner.commercial_partner_id
-                moves.with_context(
-                    bypass_lock_check=BYPASS_LOCK_CHECK
-                ).commercial_partner_id = partner.commercial_partner_id
-                partner._message_log(
-                    body=_("The commercial partner has been updated for all related accounting entries.")
+
+                reconciled_moves = moves.filtered(
+                    lambda m: m.line_ids.filtered(
+                        lambda l: l.matched_debit_ids or l.matched_credit_ids
+                    )
                 )
+                unreconciled_moves = moves - reconciled_moves
+
+                if unreconciled_moves:
+                    # Make sure to write on all the lines at the same time to
+                    # avoid breaking the reconciliation check
+                    unreconciled_moves.line_ids.with_context(
+                        bypass_lock_check=BYPASS_LOCK_CHECK
+                    ).partner_id = partner.commercial_partner_id
+                    unreconciled_moves.with_context(
+                        bypass_lock_check=BYPASS_LOCK_CHECK
+                    ).commercial_partner_id = partner.commercial_partner_id
+                    partner._message_log(
+                        body=_("Se actualizó el contacto comercial en todos los asientos contables relacionados.")
+                    )
+
+                if reconciled_moves:
+                    partner._message_log(
+                        body=_(
+                            "No se pudo actualizar el contacto comercial en los siguientes asientos "
+                            "porque ya están conciliados: %(moves)s. "
+                            "Si necesita actualizarlos, primero rompa la conciliación e intente de nuevo.",
+                            moves=", ".join(reconciled_moves.mapped('name')),
+                        )
+                    )
             return res
 
         return super().write(vals)
