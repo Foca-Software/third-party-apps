@@ -11,4 +11,5 @@ class AccountMove(models.Model):
         string="Payment Type",
         required=True,
         default="immediate",
+        tracking=True,
     )
