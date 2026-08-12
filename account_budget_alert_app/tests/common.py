@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo.addons.account.tests.account_test_classes import AccountingTestCase
@@ -12,7 +11,7 @@ class TestAccountBudgetCommon(AccountingTestCase):
         # In order to check account budget module in Odoo I created a budget with few budget positions
         # Checking if the budgetary positions have accounts or not
         account_ids = self.env['account.account'].search([
-            ('user_type_id', '=', self.ref('account.data_account_type_revenue')),
+            ('account_type', '=', 'income'),
             ('tag_ids.name', 'in', ['Operating Activities'])
         ]).ids
         if not account_ids:

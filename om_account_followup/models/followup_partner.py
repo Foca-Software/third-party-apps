@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 
 from odoo import api, fields, models, _
 from odoo import tools
@@ -42,8 +41,7 @@ class FollowupStatByPartner(models.Model):
                     account_move_line l
                     LEFT JOIN account_account a ON (l.account_id = a.id)
                 WHERE
-                    a.user_type_id IN (SELECT id FROM account_account_type
-                    WHERE type = 'receivable') AND
+                    a.account_type = 'asset_receivable' AND
                     l.full_reconcile_id is NULL AND
                     l.partner_id IS NOT NULL AND
                     l.parent_state = 'posted'

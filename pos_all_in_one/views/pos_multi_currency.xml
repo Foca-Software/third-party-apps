@@ -45,7 +45,7 @@
             <field name="model">pos.order</field>
             <field name="inherit_id" ref="point_of_sale.view_pos_pos_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//field[@name='payment_ids']/tree/field[@name='amount']" position="after">
+                <xpath expr="//field[@name='payment_ids']/list/field[@name='amount']" position="after">
                     <field name = "account_currency"/>
                     <field name = "currency"/>
                 </xpath>

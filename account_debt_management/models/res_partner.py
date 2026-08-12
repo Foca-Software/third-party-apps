@@ -9,8 +9,7 @@ from odoo import api, models, fields, _
 class ResPartner(models.Model):
     _inherit = 'res.partner'
 
-    unreconciled_domain = [
-        ('reconciled', '=', False), ('full_reconcile_id', '=', False)]
+    unreconciled_domain = [('reconciled', '=', False), ('full_reconcile_id', '=', False)]
     receivable_domain = [('internal_type', '=', 'receivable')]
     payable_domain = [('internal_type', '=', 'payable')]
 
@@ -48,15 +47,16 @@ class ResPartner(models.Model):
             # group_by_company
             else:
                 # we only want companies that have moves for this partner
-                records = self.env['account.debt.line'].read_group(
+                records = self.env['account.debt.line']._read_group(
                     domain=[('partner_id', '=', self.id)],
-                    fields=['company_id'],
                     groupby=['company_id'],
+                    aggregates=['__count'],
                 )
                 company_ids = []
                 for record in records:
                     company_ids.append(record['company_id'][0])
                 return self.env['res.company'].browse(company_ids)
+
 
     def _get_debt_report_lines(self, company):
         def get_line_vals(
@@ -85,7 +85,6 @@ class ResPartner(models.Model):
             }
 
         self.ensure_one()
-
         result_selection = self._context.get('result_selection', False)
         from_date = self._context.get('from_date', False)
         to_date = self._context.get('to_date', False)

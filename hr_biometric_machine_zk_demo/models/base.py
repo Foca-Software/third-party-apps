@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import sys
 from datetime import datetime
 from socket import AF_INET, SOCK_DGRAM, SOCK_STREAM, socket, timeout

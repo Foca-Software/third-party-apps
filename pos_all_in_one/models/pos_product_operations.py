@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Part of BrowseInfo. See LICENSE file for full copyright and licensing details.
 
 from odoo import api, fields, models
@@ -55,13 +54,19 @@ class ProductProduct(models.Model):
         else:
             product['standard_price'] = product_get_id.standard_price
 
-        if product.get('price') != '':         
-            if '.' in product.get('price'):
-                product['standard_price'] = product.get('price')     
+        # Compatibility: some older POS frontends sent the product cost under the
+        # key `price`. In Odoo, `product.product.price` was deprecated long ago;
+        # the right field for cost is `standard_price`. If `standard_price` was
+        # not provided, fall back to `price`.
+        legacy_price = product.get('price')
+        if (not product.get('standard_price')) and legacy_price not in (None, ''):
+            if '.' in legacy_price:
+                product['standard_price'] = legacy_price
             else:
-                product['standard_price'] = product.get('price').replace(',','.')
-        else:
-            product['standard_price'] = product_get_id.standard_price                
+                product['standard_price'] = legacy_price.replace(',', '.')
+
+        # Never write the deprecated/removed field name.
+        product.pop('price', None)
 
         if ('(') in product.get('display_name'):
              name = product.get('display_name').split('(')

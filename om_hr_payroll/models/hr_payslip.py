@@ -97,17 +97,17 @@ class HrPayslip(models.Model):
             copied_payslip.compute_sheet()
             copied_payslip.action_payslip_done()
         form_view_ref = self.env.ref('om_om_hr_payroll.view_hr_payslip_form', False)
-        tree_view_ref = self.env.ref('om_om_hr_payroll.view_hr_payslip_tree', False)
+        list_view_ref = self.env.ref('om_om_hr_payroll.view_hr_payslip_tree', False)
         return {
             'name': (_("Refund Payslip")),
-            'view_mode': 'tree, form',
+            'view_mode': 'list, form',
             'view_id': False,
             'view_type': 'form',
             'res_model': 'hr.payslip',
             'type': 'ir.actions.act_window',
             'target': 'current',
             'domain': "[('id', 'in', %s)]" % copied_payslip.ids,
-            'views': [(tree_view_ref and tree_view_ref.id or False, 'tree'), (form_view_ref and form_view_ref.id or False, 'form')],
+            'views': [(list_view_ref and list_view_ref.id or False, 'list'), (form_view_ref and form_view_ref.id or False, 'form')],
             'context': {}
         }
 
@@ -390,7 +390,7 @@ class HrPayslip(models.Model):
         employee = self.env['hr.employee'].browse(employee_id)
         locale = self.env.context.get('lang') or 'en_US'
         res['value'].update({
-            'name': _('Salary Slip of %s for %s') % (employee.name, tools.ustr(babel.dates.format_date(date=ttyme, format='MMMM-y', locale=locale))),
+            'name': _('Salary Slip of %s for %s') % (employee.name, babel.dates.format_date(date=ttyme, format='MMMM-y', locale=locale)),
             'company_id': employee.company_id.id,
         })
 
@@ -439,7 +439,7 @@ class HrPayslip(models.Model):
 
         ttyme = datetime.combine(fields.Date.from_string(date_from), time.min)
         locale = self.env.context.get('lang') or 'en_US'
-        self.name = _('Salary Slip of %s for %s') % (employee.name, tools.ustr(babel.dates.format_date(date=ttyme, format='MMMM-y', locale=locale)))
+        self.name = _('Salary Slip of %s for %s') % (employee.name, babel.dates.format_date(date=ttyme, format='MMMM-y', locale=locale))
         self.company_id = employee.company_id
 
         if not self.env.context.get('contract') or not self.contract_id:

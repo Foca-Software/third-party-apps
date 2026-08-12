@@ -19,7 +19,7 @@
             <field name="name">mro.request.tree</field>
             <field name="model">mro.request</field>
             <field name="arch" type="xml">
-                <tree string="Maintenance Requests">
+                <tree>
                     <field name="message_unread" invisible="1"/>
                     <field name="name"/>
                     <field name="execution_date" string="Date"/>
@@ -112,7 +112,7 @@
             <field name="name">mro.order.tree</field>
             <field name="model">mro.order</field>
             <field name="arch" type="xml">
-                <tree string="Maintenance Orders">
+                <tree>
                     <field name="message_unread" invisible="1"/>
                     <field name="name"/>
                     <field name="date_execution" string="Order Date" widget="date"/>
@@ -183,7 +183,7 @@
                             <page string="Parts">
                                     <group string="Planned Parts" states="draft,released,done,parts_except,cancel">
                                         <field name="parts_lines" nolabel="1" context="{'default_categ_id': context.get('default_categ_id')}">
-                                            <tree string="Planned Parts" editable="bottom">
+                                            <tree editable="bottom">
                                                 <field name="parts_id" domain="[('isParts','=',True)]" context="{'default_categ_id': context.get('default_categ_id')}"/>
                                                 <field name="parts_qty"/>
                                                 <field name="parts_uom" groups="uom.group_uom"/>
@@ -193,7 +193,7 @@
                                     </group>
                                     <group string="Available Parts" states="released,parts_except">
                                         <field name="parts_ready_lines" nolabel="1" readonly="1">
-                                            <tree string="Available Parts">
+                                            <tree>
                                                 <field name="product_id" string="Parts"/>
                                                 <field name="product_qty"/>
                                                 <field name="product_uom" groups="uom.group_uom"/>
@@ -203,7 +203,7 @@
                                     </group>
                                     <group string="Parts to Consume" states="ready">
                                         <field name="parts_move_lines" nolabel="1" readonly="1">
-                                            <tree string="Parts to Consume">
+                                            <tree>
                                                 <field name="product_id" string="Parts"/>
                                                 <field name="product_qty" string="Quantity"/>
                                                 <field name="product_uom" string="Unit of Measure" groups="uom.group_uom"/>
@@ -213,7 +213,7 @@
                                     </group>
                                     <group string="Consumed Parts" states="ready,done">
                                         <field name="parts_moved_lines" nolabel="1" readonly="1">
-                                           <tree string="Consumed Parts">
+                                           <tree>
                                                <field name="product_id" readonly="1" string="Parts"/>
                                                <field name="product_qty" readonly="1"/>
                                                <field name="product_uom" readonly="1" string="Unit of Measure" groups="uom.group_uom"/>
@@ -345,7 +345,7 @@
             <field name="name">mro.task.tree</field>
             <field name="model">mro.task</field>
             <field name="arch" type="xml">
-                <tree string="Maintenance Tasks">
+                <tree>
                     <field name="category_id"/>
                     <field name="name"/>
                     <field name="maintenance_type"/>
@@ -372,7 +372,7 @@
                     <notebook>
                         <page string="Parts">
                             <field name="parts_lines" nolabel="1" context="{'default_categ_id': context.get('default_categ_id')}">
-                                <tree string="Parts" editable="bottom">
+                                <tree editable="bottom">
                                     <field name="parts_id" domain="[('isParts','=','True')]" context="{'default_categ_id': context.get('default_categ_id')}"/>
                                     <field name="parts_qty"/>
                                     <field name="parts_uom" groups="uom.group_uom"/>

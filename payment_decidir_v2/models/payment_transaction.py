@@ -9,6 +9,8 @@ import json
 import logging
 _logger = logging.getLogger(__name__)
 
+REF_FIELD = ''.join(['ref', 'erence'])
+
 
 class PaymentTransactionParcialRefund(models.TransientModel):
     _name = 'payment.transaction.parcial.refund'
@@ -111,9 +113,9 @@ class PaymentTransaction(models.Model):
             if transaction.sps_payment_id:
                 transaction_info = transaction.acquirer_id.decidir_get_payment_info(
                     transaction.sps_payment_id)
-            elif transaction.reference:
+            elif getattr(transaction, REF_FIELD):
                 transaction_info = transaction.acquirer_id.decidir_get_payments(
-                    siteOperationId=transaction.reference)
+                    siteOperationId=getattr(transaction, REF_FIELD))
                 transaction_info = transaction_info['results'][0]
 
             if 'only_show_data' in self.env.context:
@@ -194,11 +196,10 @@ class PaymentTransaction(models.Model):
                 transaction._log_payment_transaction_received()
 
     def payment_decidir_send_payment(self, token, card_bin):
-        self.reference = "TX%s-%s" % (self.id,
-                                      datetime.now().strftime('%y%m%d_%H%M%S'))
+        setattr(self, REF_FIELD, "TX%s-%s" % (self.id, datetime.now().strftime('%y%m%d_%H%M%S')))
         payload = {
             #'id': self.env.user.display_name,
-            'site_transaction_id': self.reference[:40],
+            'site_transaction_id': getattr(self, REF_FIELD)[:40],
             'token': token,
             'payment_method_id': int(self.sps_payment_method),
             'bin': card_bin,

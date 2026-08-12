@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<openerp>
-	<data>
+<odoo>
 
         <!-- Work order menu -->
         <record id="mro_workorder_tree_view" model="ir.ui.view">
             <field name="name">mro.workorder.tree</field>
             <field name="model">mro.workorder</field>
             <field name="arch" type="xml">
-                <tree string="Work Orders">
+                <tree>
                     <field name="name"/>
                     <field name="date_order" widget="date"/>
                     <field name="user_id"/>
@@ -77,5 +76,4 @@
             parent="menu_mro_maintenance"
             sequence="10"/>
 
- 	</data>
-</openerp>
+</odoo>

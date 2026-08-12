@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Part of BrowseInfo. See LICENSE file for full copyright and licensing details.
 
 from odoo import fields, models, api, _
@@ -24,7 +23,7 @@ class pos_create_sales_order(models.Model):
 			vals = {'product_id': product_dict.get('id'),
 					'name':product_name,
 					'product_uom_qty': product_dict.get('quantity'),
-					'price_unit':product_dict.get('price'),
+					'price_unit':product_dict.get('price') or product_dict.get('lst_price') or product_dict.get('list_price'),
 					'product_uom':product_dict.get('uom_id'),
 					'order_id': order_id.id}
 			sale_order_line_obj.create(vals)					
@@ -328,7 +327,8 @@ class product(models.Model):
 				if len(incoming) > 0:
 					for quant in incoming:
 						if quant.state not in ['done']:
-							incoming_qty += quant.product_qty
+							qty = getattr(quant, 'quantity_done', 0.0) or getattr(quant, 'product_uom_qty', 0.0) or getattr(quant, 'reserved_qty', 0.0) or getattr(quant, 'product_qty', 0.0)
+							incoming_qty += qty
 					product.available_quantity = qty-product_qty + incoming_qty
 					res.update({product.id : qty-product_qty + incoming_qty})
 			else:
@@ -341,7 +341,8 @@ class product(models.Model):
 					if len(incoming) > 0:
 						for quant in incoming:
 							if quant.state not in ['done']:
-								incoming_qty += quant.product_qty
+								qty = getattr(quant, 'quantity_done', 0.0) or getattr(quant, 'product_uom_qty', 0.0) or getattr(quant, 'reserved_qty', 0.0) or getattr(quant, 'product_qty', 0.0)
+								incoming_qty += qty
 					product.available_quantity = qty-product_qty + incoming_qty
 					res.update({product.id : qty-product_qty + incoming_qty})
 				else:
@@ -353,7 +354,8 @@ class product(models.Model):
 					if len(incoming) > 0:
 						for quant in incoming:
 							if quant.state not in ['done']:
-								incoming_qty += quant.product_qty
+								qty = getattr(quant, 'quantity_done', 0.0) or getattr(quant, 'product_uom_qty', 0.0) or getattr(quant, 'reserved_qty', 0.0) or getattr(quant, 'product_qty', 0.0)
+								incoming_qty += qty
 					product.available_quantity = quants.quantity - product_qty + incoming_qty
 					res.update({product.id : quants.quantity - product_qty + incoming_qty})
 		return [res]

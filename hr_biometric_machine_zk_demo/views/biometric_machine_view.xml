@@ -26,13 +26,13 @@
 	</record>
 
 	<record id="view_zk_machine_demo_udp_tree" model="ir.ui.view">
-		<field name="name">zk.machine.tree</field>
+		<field name="name">zk.machine.list</field>
 		<field name="model">zk.machine.demo.udp</field>
 		<field name="type">tree</field>
 		<field name="arch" type="xml">
-			<tree string="Zk Machine">
+			<list>
 				<field name="name"/>
-			</tree>
+			</list>
 		</field>
 	</record>
 
@@ -41,7 +41,7 @@
             <field name="name">Attendances</field>
             <field name="res_model">zk.machine.demo.udp</field>
             <field name="type">ir.actions.act_window</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">list,form</field>
         </record>
 
 

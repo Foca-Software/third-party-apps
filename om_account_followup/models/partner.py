@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 
 from functools import reduce
 from lxml import etree
@@ -235,7 +234,7 @@ class ResPartner(models.Model):
         company_id = self.env.user.company_id.id
         if not self.env['account.move.line'].search(
                 [('partner_id', '=', self.id),
-                 ('account_id.user_type_id.type', '=', 'receivable'),
+                 ('account_id.account_type', '=', 'asset_receivable'),
                  ('full_reconcile_id', '=', False),
                  ('company_id', '=', company_id),
                  '|', ('date_maturity', '=', False),
@@ -312,12 +311,7 @@ class ResPartner(models.Model):
                                     ELSE 0.0 END AS bal2, p.id as pid FROM
                                     (SELECT (debit-credit) AS bal, partner_id
                                     FROM account_move_line l
-                                    WHERE account_id IN
-                                            (SELECT id FROM account_account
-                                            WHERE user_type_id IN (SELECT id
-                                            FROM account_account_type
-                                            WHERE type=\'receivable\'
-                                            ))
+                                    WHERE account_id IN (SELECT id FROM account_account WHERE account_type='asset_receivable')
                                     %s AND full_reconcile_id IS NULL
                                     AND company_id = %s) AS l
                                     RIGHT JOIN res_partner p
@@ -344,9 +338,7 @@ class ResPartner(models.Model):
         query = 'SELECT partner_id FROM account_move_line l ' \
                 'WHERE account_id IN ' \
                 '(SELECT id FROM account_account ' \
-                'WHERE user_type_id IN ' \
-                '(SELECT id FROM account_account_type ' \
-                'WHERE type=\'receivable\')) AND l.company_id = %s ' \
+                "WHERE account_type='asset_receivable') AND l.company_id = %s " \
                 'AND l.full_reconcile_id IS NULL ' \
                 'AND partner_id IS NOT NULL GROUP BY partner_id '
         query = query % (company_id)
@@ -392,7 +384,7 @@ class ResPartner(models.Model):
     # unreconciled_aml_ids = fields.One2many('account.move.line', 'partner_id')
     unreconciled_aml_ids = fields.One2many('account.move.line', 'partner_id',
                                            domain=[('full_reconcile_id', '=', False),
-                                                   ('account_id.user_type_id.type', '=', 'receivable'),
+                                                   ('account_id.account_type', '=', 'asset_receivable'),
                                                    ('parent_state', '=', 'posted')])
     latest_followup_date = fields.Date(compute='_get_latest', string="Latest Follow-up Date",
                                        help="Latest date that the follow-up level of the partner was changed")

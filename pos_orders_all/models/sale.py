@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Part of BrowseInfo. See LICENSE file for full copyright and licensing details.
 
 from odoo import fields, models, api, _, tools
@@ -111,7 +110,7 @@ class PosOrderInherit(models.Model):
 				# do not hide transactional errors, the order(s) won't be saved!
 				raise
 			except Exception as e:
-				_logger.error('Could not fully process the POS Order: %s', tools.ustr(e))
+				_logger.error('Could not fully process the POS Order: %s', e)
 
 
 		if pos_order.to_invoice and pos_order.state == 'paid':

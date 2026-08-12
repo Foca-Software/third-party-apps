@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 
 import datetime
 import time
@@ -161,7 +160,7 @@ class FollowupPrint(models.TransientModel):
             'name': _('Send Letters and Emails: Actions Summary'),
             'view_type': 'form',
             'context': context,
-            'view_mode': 'tree,form',
+            'view_mode': 'list,form',
             'res_model': 'followup.sending.results',
             'views': [(resource_id.id, 'form')],
             'type': 'ir.actions.act_window',
@@ -186,8 +185,7 @@ class FollowupPrint(models.TransientModel):
                 ON (l.account_id=a.id)
                 WHERE (l.full_reconcile_id IS NULL
                 AND parent_state = 'posted')
-                AND a.user_type_id IN (SELECT id FROM account_account_type
-                    WHERE type = 'receivable')
+                AND a.account_type = 'asset_receivable'
                 AND (l.partner_id is NOT NULL)
                 AND (l.debit > 0)
                 AND (l.company_id = %s)

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Part of BrowseInfo. See LICENSE file for full copyright and licensing details.
 import logging
 from datetime import timedelta
@@ -210,7 +209,6 @@ class AccountInvoiceInherit(models.Model):
 					'debit': taxes_map_entry['balance'] > 0.0 and taxes_map_entry['balance'] or 0.0,
 					'credit': taxes_map_entry['balance'] < 0.0 and -taxes_map_entry['balance'] or 0.0,
 					'tax_base_amount': tax_base_amount,
-					'exclude_from_invoice_tab': True,
 					'tax_exigible': tax.tax_exigibility == 'on_invoice',
 					**taxes_map_entry['grouping_dict'],
 				})

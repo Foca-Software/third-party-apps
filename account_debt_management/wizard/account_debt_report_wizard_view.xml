@@ -10,12 +10,12 @@
                     <group>
                         <field name="result_selection"/>
                         <field name="company_id" string="Company" ref="base.main_company"/>
-                        <field name="company_type" attrs="{'required': [('company_id', '=', False)], 'invisible': [('company_id', '!=', False)]}" ref="base.main_company"/>
+                        <field name="company_type" required="not company_id" invisible="company_id != False" ref="base.main_company"/>
                     </group>
                     <group>
                         <field name="historical_full"/>
-                        <field name="from_date" string="Detallar desde" attrs="{'invisible': [('historical_full', '=', False)]}"/>
-                        <field name="to_date" string="Detallar hasta" attrs="{'invisible': [('historical_full', '=', False)]}"/>
+                        <field name="from_date" string="Detallar desde" invisible="not historical_full"/>
+                        <field name="to_date" string="Detallar hasta" invisible="not historical_full"/>
                         <field name="secondary_currency"/>
                         <field name="financial_amounts" groups="account_financial_amount.account_use_financial_amounts"/>
                         <field name="show_invoice_detail"/>
@@ -33,12 +33,14 @@
         </field>
     </record>
 
-    <act_window name="Account Debt Report"
-        id="action_account_debt_report_wizard"
-        binding_model="res.partner"
-        res_model="account.debt.report.wizard"
-        view_mode="form"
-        target="new"/>
+    <record id="action_account_debt_report_wizard" model="ir.actions.act_window">
+        <field name="name">Account Debt Report</field>
+        <field name="binding_model_id" ref="base.model_res_partner"/>
+        <field name="binding_type">action</field>
+        <field name="res_model">account.debt.report.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
         <!-- ahora lo agregamos al print -->
         <!-- key2="client_action_multi" -->
                 <!-- key2="client_print_multi" -->

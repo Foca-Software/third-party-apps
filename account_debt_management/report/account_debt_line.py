@@ -16,6 +16,7 @@ class AccountDebtLine(models.Model):
         ],
         "account.move": [
             "l10n_latam_document_type_id",
+            "move_type"
         ],
         "account.move.line": [
             "account_id",
@@ -34,7 +35,9 @@ class AccountDebtLine(models.Model):
         "litigation with the associated partner",
     )
     document_type_id = fields.Many2one(
-        "account.document.type", "Tipo Documento", readonly=True
+        "account.document.type", 
+        "Tipo Documento", 
+        readonly=True
     )
     document_number = fields.Char(
         readonly=True,
@@ -52,9 +55,17 @@ class AccountDebtLine(models.Model):
         ],
         string="Type",
     )
-    date = fields.Date(readonly=True)
-    date_maturity = fields.Date(readonly=True, string="Fecha Vencimiento")
-    ref = fields.Char("Referencia", readonly=True)
+    date = fields.Date(
+        readonly=True
+    )
+    date_maturity = fields.Date(
+        readonly=True, 
+        string="Fecha Vencimiento"
+    )
+    ref = fields.Char(
+        "Referencia", 
+        readonly=True
+    )
     amount = fields.Monetary(
         readonly=True,
         string="Monto",
@@ -65,7 +76,11 @@ class AccountDebtLine(models.Model):
         string="Monto residual",
         currency_field="company_currency_id",
     )
-    currency_id = fields.Many2one("res.currency", "Moneda", readonly=True)
+    currency_id = fields.Many2one(
+        "res.currency", 
+        "Moneda", 
+        readonly=True
+    )
     amount_currency = fields.Monetary(
         readonly=True,
         string="Monto en moneda origen",
@@ -76,8 +91,14 @@ class AccountDebtLine(models.Model):
         string="Saldo en moneda de la empresa",
         currency_field="currency_id",
     )
-    move_lines_str = fields.Char("Entry Lines String", readonly=True)
-    account_id = fields.Many2one("account.account", "Cuenta", readonly=True)
+    move_lines_str = fields.Char(
+        "Entry Lines String", 
+        readonly=True
+    )
+    account_id = fields.Many2one(
+        "account.account", "Cuenta", 
+        readonly=True
+    )
     internal_type = fields.Selection(
         [("receivable", "Receivable"), ("payable", "Payable")],
         "Tipo",
@@ -93,12 +114,21 @@ class AccountDebtLine(models.Model):
         readonly=True,
     )
     reconciled = fields.Boolean()
-    partner_id = fields.Many2one("res.partner", "Cliente/Proveedor", readonly=True)
-    account_type = fields.Many2one(
-        "account.account.type", "Account Type", readonly=True
+    partner_id = fields.Many2one(
+        "res.partner", 
+        "Cliente/Proveedor", 
+        readonly=True
     )
-    company_id = fields.Many2one("res.company", "Empresa", readonly=True)
-
+    account_type = fields.Selection(
+        selection=lambda self: self.env['account.account']._fields['account_type'].selection,
+        string="Account Type",
+        readonly=True,
+    )
+    company_id = fields.Many2one(
+        "res.company", 
+        "Empresa", 
+        readonly=True
+    )
     # computed fields
     financial_amount = fields.Monetary(
         compute="_compute_move_lines_data",
@@ -244,104 +274,93 @@ class AccountDebtLine(models.Model):
 
     # @api.model_cr
     def init(self):
-        # pylint: disable=E8103
         tools.drop_view_if_exists(self._cr, self._table)
+
         date_maturity_type = (
             self.env["ir.config_parameter"]
             .sudo()
             .get_param("account_debt_management.date_maturity_type")
         )
         if date_maturity_type == "detail":
-            params = ("l.date_maturity as date_maturity,", ", l.date_maturity")
+            date_maturity_sql = "l.date_maturity as date_maturity,"
+            date_maturity_group = ", l.date_maturity"
         elif date_maturity_type == "max":
-            params = ("max(l.date_maturity) as date_maturity,", "")
+            date_maturity_sql = "max(l.date_maturity) as date_maturity,"
+            date_maturity_group = ""
         else:
-            params = ("min(l.date_maturity) as date_maturity,", "")
-        query = (
-            """
+            date_maturity_sql = "min(l.date_maturity) as date_maturity,"
+            date_maturity_group = ""
+
+        query = f"""
             SELECT
-                -- es una funcion y se renumera constantemente, por eso
-                -- necesita el over
-                -- ROW_NUMBER() OVER (ORDER BY l.partner_id, am.company_id,
-                --     l.account_id, l.currency_id, a.internal_type,
-                --     a.user_type_id, c.document_number, am.document_type_id,
-                --     l.date_maturity) as id,
-                -- igualmente los move lines son unicos, usamos eso como id
-                max(l.id) as id,
-                string_agg(cast(l.id as varchar), ',') as move_lines_str,
-                max(am.date) as date,
-                %s
-                am.l10n_latam_document_type_id as document_type_id,
-                -- c.document_number as document_number,
-                am.name as document_number,
-                am.type as type,
-                full_reconcile_id,
-                bool_and(l.reconciled) as reconciled,
-                -- l.blocked as blocked,
-                -- si cualquier deuda esta bloqueada de un comprobante,
-                -- toda deberia estar bloqueda
-                bool_and(l.blocked) as blocked,
-
-                -- TODO borrar, al final no pudimos hacerlo asi porque si no
-                -- agrupamos por am.name, entonces todo lo que no tenga tipo
-                -- de doc lo muestra en una linea. Y si lo agregamos nos quedan
-                -- desagregados los multiples pagos (y otros similares)
-                -- si devuelve '' el concat del prefix y number lo cambiamos
-                -- por null y luego coalesce se encarga de elerig el name
-                -- devolvemos el string_agg de am.name para no tener que
-                -- agregarlo en la clausula del group by
-                -- COALESCE(NULLIF(CONCAT(
-                --     dt.doc_code_prefix, am.document_number), ''),
-                --         string_agg(am.name, ',')) as document_number,
-
-                string_agg(am.ref, ',') as ref,
-                --am.state as move_state,
-                --l.full_reconcile_id as full_reconcile_id,
-                --l.reconciled as reconciled,
-                -- l.reconcile_partial_id as reconcile_partial_id,
-                l.partner_id as partner_id,
-                am.company_id as company_id,
-                a.internal_type as internal_type,
-                -- am.journal_id as journal_id,
-                -- p.fiscalyear_id as fiscalyear_id,
-                -- am.period_id as period_id,
-                l.account_id as account_id,
-                --l.analytic_account_id as analytic_account_id,
-                -- a.internal_type as type,
-                a.user_type_id as account_type,
-                l.currency_id as currency_id,
-                sum(l.amount_currency) as amount_currency,
-                sum(l.amount_residual_currency) as amount_residual_currency,
-                sum(l.amount_residual) as amount_residual,
-                --pa.user_id as user_id,
-                sum(l.balance) as amount
-                -- coalesce(l.debit, 0.0) - coalesce(l.credit, 0.0) as amount
-            FROM
-                account_move_line l
-                left join account_account a on (l.account_id = a.id)
-                left join account_move am on (am.id=l.move_id)
-                -- left join account_period p on (am.period_id=p.id)
-                -- left join res_partner pa on (l.partner_id=pa.id)
-                -- left join account_document_type dt on (
-                left join l10n_latam_document_type dt on (
-                    am.l10n_latam_document_type_id=dt.id)
-            WHERE
-                am.state != 'draft' and
-                a.internal_type IN ('payable', 'receivable')
-            GROUP BY
-                l.partner_id, am.company_id, l.account_id, l.currency_id,
+                max(l.id) AS id,
+                string_agg(l.id::varchar, ',') AS move_lines_str,
+                max(am.date) AS date,
+                {date_maturity_sql}
+                am.l10n_latam_document_type_id AS document_type_id,
+                am.name AS document_number,
+                am.move_type AS type,
                 l.full_reconcile_id,
-                a.internal_type, a.user_type_id, am.name, am.type,
-                am.l10n_latam_document_type_id %s
-                -- dt.doc_code_prefix, am.document_number
+                bool_and(l.reconciled) AS reconciled,
+                false AS blocked,
+                am.debo_payment_type AS debo_payment_type_related,
+                string_agg(am.ref::text, ',') AS ref,
+                am.partner_id AS partner_id,
+                am.company_id AS company_id,
+
+                a.account_type AS account_type,
+
+                max(
+                    CASE
+                        WHEN a.account_type = 'asset_receivable' THEN 'receivable'
+                        WHEN a.account_type = 'liability_payable' THEN 'payable'
+                        ELSE NULL
+                    END
+                ) AS internal_type,
+
+                l.account_id AS account_id,
+                l.currency_id AS currency_id,
+                sum(l.amount_currency) AS amount_currency,
+                sum(l.amount_residual_currency) AS amount_residual_currency,
+                sum(l.amount_residual) AS amount_residual,
+                sum(l.balance) AS amount,
+
+                max(am.store_id) AS store_id,
+
+                CASE
+                    WHEN am.move_type = 'entry' THEN max(pg.partner_type::text)
+                    WHEN am.move_type IN ('out_invoice','out_refund','out_receipt') THEN 'customer'
+                    WHEN am.move_type IN ('in_invoice','in_refund','in_receipt') THEN 'supplier'
+                    ELSE NULL
+                END AS partner_type
+
+            FROM account_move_line l
+                LEFT JOIN account_account a ON l.account_id = a.id
+                LEFT JOIN account_move am ON am.id = l.move_id
+                LEFT JOIN account_payment p ON p.id = l.payment_id
+                LEFT JOIN account_payment_group pg ON pg.id = p.payment_group_id
+                LEFT JOIN l10n_latam_document_type dt ON am.l10n_latam_document_type_id = dt.id
+
+            WHERE
+                am.state IN ('posted', 'forwarded')
+                AND a.account_type IN ('asset_receivable', 'liability_payable')
+
+            GROUP BY
+                am.partner_id,
+                am.company_id,
+                l.account_id,
+                l.currency_id,
+                l.full_reconcile_id,
+                a.account_type,
+                am.name,
+                am.move_type,
+                am.debo_payment_type,
+                am.l10n_latam_document_type_id
+                {date_maturity_group}
         """
-            % params
-        )
-        self._cr.execute(
-            """CREATE or REPLACE VIEW %s as (%s
-        )"""
-            % (self._table, query)
-        )
+
+        self._cr.execute(f"CREATE OR REPLACE VIEW {self._table} AS ({query})")
+
 
     # TODO tal vez podamos usar métodos agregados por account_usability
     # que hacen exactamente esto
@@ -360,6 +379,7 @@ class AccountDebtLine(models.Model):
             "res_id": res_id,
             # 'view_id': res[0],
         }
+
 
     def get_model_id_and_name(self):
         """
@@ -386,6 +406,7 @@ class AccountDebtLine(models.Model):
         # TODO ver si implementamos que pasa cuando hay mas de un move
         return ["account.move", self.move_id.id, _("View Move"), False]
 
+
     def cancel_amount_residual_currency(self):
         """Agregamos este metodo (y el botón) para cancelar la deuda en moneda
         en los casos donde no se canceló automaticamente el importe en esa
@@ -393,7 +414,7 @@ class AccountDebtLine(models.Model):
         """
         # al final esto lo hacemos por vista, ademas tampoco es tan critico
         # porque podrian hacer este ajuste manualmente
-        # if not self.user_has_groups('account.group_account_manager'):
+        # if not self.env.user.has_group('account.group_account_manager'):
         #     group = self.env.ref('account.group_account_manager')
         #     raise UserError(_(
         #         'Only users with group "%s / %s" group can cancel amount '

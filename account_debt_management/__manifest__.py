@@ -19,7 +19,7 @@
 ##############################################################################
 {
     'name': 'Account Debt Management',
-    'version': '13.0.1.3.0',
+    'version': "18.0.1.0.0",
     'category': 'Account Reporting',
     'author': 'Moldeo Interactive,ADHOC SA',
     'license': 'AGPL-3',
@@ -32,6 +32,8 @@
         # mas adelante se puede separar en otro modulo que integre
         # funcionalidad con este otro modulo
         # 'account_payment_group_document',
+        'report_aeroo',
+        # 'report_aeroo_sample'
     ],
     'data': [
         'security/ir.model.access.csv',

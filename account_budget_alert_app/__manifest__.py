@@ -1,9 +1,8 @@
-# -*- coding: utf-8 -*-
 
 {
     'name' : 'Account Budget Limit Alert-Validation Warning',
     'author': "Edge Technologies",
-    'version' : '13.0.1.1',
+    'version': "18.0.1.0.0",
     'live_test_url':'https://youtu.be/Q-46v4WzE0M',
     "images":["static/description/main_screenshot.png"],
     'summary' : 'Accounting Budget Limit Alert Budget limit Warning against Purchase budget limit alerts against Bill budget exceed alerts budget limit alert accounting budget validation against purchase budget integration budget warning limit exceed warning on budget',
@@ -23,7 +22,5 @@
     'demo': ['data/account_budget_demo.xml'],
     'installable' : True,
     'auto_install' : False,
-    'price': 58,
     'category' : 'Accounting',
-    'currency': "EUR",
 }

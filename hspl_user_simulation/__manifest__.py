@@ -13,12 +13,11 @@
     "author": "Heliconia Solutions Pvt. Ltd.",
     "website": "https://heliconia.io",
     "category": "Tools",
-    "version": "13.0.1.0.0",
+    "version": "18.0.1.0.0",
     "license": "OPL-1",
     "depends": ["base", "web"],
     "data": [
         "security/groups.xml",
-        "views/views.xml",
         "views/templates.xml",
         "wizard/user_simulation_wizard_view.xml",
     ],

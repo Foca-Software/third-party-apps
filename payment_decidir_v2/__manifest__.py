@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 {
     'name': "payment decidir",
 
@@ -13,7 +12,7 @@
     'website': "http://www.blancoamor.com",
 
     'category': 'sale',
-    'version': '13.0.0.0.1',
+    'version': "18.0.1.0.0",
     'depends': ['payment', 'credit_card_instalment', 'sale'],
     'data': [
         'security/ir.model.access.csv',

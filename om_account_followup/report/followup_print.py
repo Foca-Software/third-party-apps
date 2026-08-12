@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 
 import time
 from collections import defaultdict
@@ -40,7 +39,7 @@ class ReportFollowup(models.AbstractModel):
         moveline_ids = moveline_obj.search(
             [('partner_id', '=', partner.id),
              ('parent_state', '=', 'posted'),
-             ('account_id.user_type_id.type', '=', 'receivable'),
+             ('account_id.account_type', '=', 'asset_receivable'),
              ('full_reconcile_id', '=', False),
              ('company_id', '=', company_id),
              '|', ('date_maturity', '=', False),
@@ -96,7 +95,7 @@ class ReportFollowup(models.AbstractModel):
              ('company_id', '=', stat_line.company_id.id),
              ('blocked', '=', False),
              ('debit', '!=', False),
-             ('account_id.user_type_id.type', '=', 'receivable'),
+             ('account_id.account_type', '=', 'asset_receivable'),
              ('followup_line_id', '!=', False)])
 
         partner_max_delay = 0
